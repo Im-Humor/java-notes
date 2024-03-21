@@ -21,7 +21,7 @@ public class Main {
         String[] optionList = {"new", "select", "delete"};
 
         String option = scnr.nextLine();
-        while (SearchArray(option, optionList) == false ) {
+        while (!SearchArray(option, optionList) ) {
             System.out.println("Please try again");
             option = scnr.nextLine();
         }
