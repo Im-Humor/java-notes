@@ -27,11 +27,46 @@ public class SQLite {
             statement.setQueryTimeout(30);
             ResultSet rs = statement.executeQuery("select * from note_list");
             while(rs.next()) {
-                System.out.println("name = " + rs.getString("note_name"));
+                System.out.println("name = " + rs.getString("note_name") + " id: " + rs.getString("id"));
             }
         }
         catch(SQLException e) {
             e.printStackTrace(System.err);
         }
     }
+
+    public static void viewNoteContents(String db_path, String noteId) {
+        try (
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:" + db_path);
+                Statement statement = connection.createStatement();
+        )
+        {
+            statement.setQueryTimeout(30);
+            ResultSet rs = statement.executeQuery("SELECT note_list.id, note_contents.id, note_contents.subnote_content " +
+                    "FROM note_list INNER JOIN note_contents on note_list.id = note_contents.parent_id " +
+                    "WHERE note_list.id = " + noteId);
+            while(rs.next()) {
+                System.out.println("id: " + rs.getString("id") + ": " + rs.getString("subnote_content"));
+            }
+        }
+        catch(SQLException e) {
+            e.printStackTrace(System.err);
+        }
+    }
+
+    public static void createSubnote(String db_path, String noteId, String textContent) {
+        try (
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:" + db_path);
+                Statement statement = connection.createStatement();
+        )
+        {
+            statement.setQueryTimeout(30);
+            statement.executeUpdate("INSERT INTO note_contents (parent_id, subnote_content) " +
+                    "VALUES (" + noteId + ", '" + textContent + "')");
+        }
+        catch(SQLException e) {
+            e.printStackTrace(System.err);
+        }
+    }
+
 }

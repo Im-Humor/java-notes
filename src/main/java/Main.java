@@ -7,12 +7,20 @@ public class Main {
 
 
         System.out.println("Hello, and welcome to my note taking Application.");
-        String option = Inputs.mainLoop();
 
-        if (option.equalsIgnoreCase("new")) {
-            Inputs.newNoteLoop();
-            Inputs.mainLoop();
+        while(true) {
+            String option = Inputs.mainLoop();
+
+            if (option.equalsIgnoreCase("new")) {
+                Inputs.newNoteLoop();
+            }
+            if (option.equalsIgnoreCase("select")) {
+                Inputs.selectNote();
+            }
+
         }
+
+
 
 
 

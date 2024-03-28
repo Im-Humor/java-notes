@@ -27,16 +27,46 @@ public class Inputs {
 
     public static void newNoteLoop() {
         Scanner scnr = new Scanner(System.in);
-        String newNoteName = null;
-        System.out.println("What would you like the new note to be named?");
+        System.out.println("What would you like the new note document to be named?");
 
-        newNoteName = scnr.nextLine();
+        String newNoteName = scnr.nextLine();
         while (newNoteName.isEmpty()) {
-            System.out.println("Note name cannot be empty.");
+            System.out.println("Note document name cannot be empty.");
             newNoteName = scnr.nextLine();
         }
 
         SQLite.createNote("notes.db", newNoteName);
         SQLite.listNoteNames("notes.db");
     }
+
+    public static void selectNote() {
+        Scanner scnr = new Scanner(System.in);
+        SQLite.listNoteNames("notes.db");
+
+        System.out.println("Which note document would you like to view?");
+        String selectId = scnr.nextLine();
+        SQLite.viewNoteContents("notes.db", selectId);
+        editNote(selectId);
+    }
+
+    public static void editNote(String selectId) {
+        Scanner scnr = new Scanner(System.in);
+        System.out.println("Would you like to 'delete' or create a 'new' note?");
+
+        String[] optionList = {"new", "delete"};
+
+        String option = scnr.nextLine();
+        while (!SearchArray(option, optionList) ) {
+            System.out.println("Please try again");
+            option = scnr.nextLine();
+        }
+
+        if (option.equalsIgnoreCase("new")) {
+            System.out.println("Enter new note:");
+            String noteText = scnr.nextLine();
+            SQLite.createSubnote("notes.db", selectId, noteText);
+        }
+
+    }
+
 }
