@@ -35,6 +35,21 @@ public class SQLite {
         }
     }
 
+    public static void deleteNote(String db_path, String noteId) {
+        try (
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:" + db_path);
+                Statement statement = connection.createStatement();
+        )
+        {
+            statement.setQueryTimeout(30);
+            statement.executeUpdate("DELETE FROM note_contents WHERE parent_id= " + noteId);
+            statement.executeUpdate("DELETE FROM note_list WHERE id= " + noteId);
+        }
+        catch(SQLException e) {
+            e.printStackTrace(System.err);
+        }
+    }
+
     public static void viewNoteContents(String db_path, String noteId) {
         try (
                 Connection connection = DriverManager.getConnection("jdbc:sqlite:" + db_path);
@@ -42,11 +57,11 @@ public class SQLite {
         )
         {
             statement.setQueryTimeout(30);
-            ResultSet rs = statement.executeQuery("SELECT note_list.id, note_contents.id, note_contents.subnote_content " +
+            ResultSet rs = statement.executeQuery("SELECT note_list.id, note_contents.id AS note_contents_id, note_contents.subnote_content " +
                     "FROM note_list INNER JOIN note_contents on note_list.id = note_contents.parent_id " +
                     "WHERE note_list.id = " + noteId);
             while(rs.next()) {
-                System.out.println("id: " + rs.getString("id") + ": " + rs.getString("subnote_content"));
+                System.out.println("id: " + rs.getString("note_contents_id") + ": " + rs.getString("subnote_content"));
             }
         }
         catch(SQLException e) {
@@ -63,6 +78,20 @@ public class SQLite {
             statement.setQueryTimeout(30);
             statement.executeUpdate("INSERT INTO note_contents (parent_id, subnote_content) " +
                     "VALUES (" + noteId + ", '" + textContent + "')");
+        }
+        catch(SQLException e) {
+            e.printStackTrace(System.err);
+        }
+    }
+
+    public static void deleteSubnote(String db_path, String noteId) {
+        try (
+                Connection connection = DriverManager.getConnection("jdbc:sqlite:" + db_path);
+                Statement statement = connection.createStatement();
+        )
+        {
+            statement.setQueryTimeout(30);
+            statement.executeUpdate("DELETE FROM note_contents WHERE id=" + noteId);
         }
         catch(SQLException e) {
             e.printStackTrace(System.err);

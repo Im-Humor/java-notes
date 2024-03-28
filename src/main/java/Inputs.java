@@ -67,6 +67,19 @@ public class Inputs {
             SQLite.createSubnote("notes.db", selectId, noteText);
         }
 
+        if (option.equalsIgnoreCase("delete")) {
+            System.out.println("Which note ID would you like to delete?");
+            String deleteId = scnr.nextLine();
+            SQLite.deleteSubnote("notes.db", deleteId);
+        }
+    }
+
+    public static void deleteNote() {
+        Scanner scnr = new Scanner(System.in);
+        System.out.println("Which note ID would you like to delete?");
+        SQLite.listNoteNames("notes.db");
+        String deleteId = scnr.nextLine();
+        SQLite.deleteNote("notes.db", deleteId);
     }
 
 }

@@ -17,6 +17,9 @@ public class Main {
             if (option.equalsIgnoreCase("select")) {
                 Inputs.selectNote();
             }
+            if (option.equalsIgnoreCase("delete")) {
+                Inputs.deleteNote();
+            }
 
         }
 
