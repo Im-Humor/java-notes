@@ -2,6 +2,9 @@ import java.util.Scanner;
 
 public class Inputs {
 
+    // helper functions for finding in array and
+    // prompting user for correct string
+
     public static boolean SearchArray(String string, String[] array) {
         for (int i = 0; i < array.length; i++) {
             if (array[i].equalsIgnoreCase(string)) {
@@ -11,21 +14,40 @@ public class Inputs {
         return false;
     }
 
-    public static String mainLoop() {
+    public static String checkString(String [] optionList)  {
         Scanner scnr = new Scanner(System.in);
-        System.out.println("Would you like to create 'New', 'Select', or 'Delete'?");
-
-        String[] optionList = {"new", "select", "delete"};
-
         String option = scnr.nextLine();
-        while (!SearchArray(option, optionList) ) {
+        if (option.equalsIgnoreCase("exit")) {
+            System.exit(0);
+        }
+        while(!SearchArray(option, optionList)) {
             System.out.println("Please try again");
             option = scnr.nextLine();
         }
         return option;
     }
 
-    public static void newNoteLoop() {
+    // initial function for user action
+
+    public static void firstOption() {
+        System.out.println("Would you like to create 'New', 'Select', or 'Delete'?");
+
+        String option = checkString(new String[]{"new", "select", "delete"});
+
+        if (option.equalsIgnoreCase("new")) {
+            newNote();
+        }
+        if (option.equalsIgnoreCase("select")) {
+            selectNote();
+        }
+        if (option.equalsIgnoreCase("delete")) {
+            deleteNote();
+        }
+    }
+
+    // prompts user for note document name
+
+    public static void newNote() {
         Scanner scnr = new Scanner(System.in);
         System.out.println("What would you like the new note document to be named?");
 
@@ -39,27 +61,29 @@ public class Inputs {
         SQLite.listNoteNames("notes.db");
     }
 
+    // prompts user for note selection by ID
+
     public static void selectNote() {
         Scanner scnr = new Scanner(System.in);
         SQLite.listNoteNames("notes.db");
 
-        System.out.println("Which note document would you like to view?");
+        System.out.println("Select note ID or 'return' to previous menu.");
         String selectId = scnr.nextLine();
+        if (selectId.equalsIgnoreCase("return")) {
+            firstOption();
+            return;
+        }
         SQLite.viewNoteContents("notes.db", selectId);
         editNote(selectId);
     }
 
+    // once note is selected, prompt user for document action
+
     public static void editNote(String selectId) {
         Scanner scnr = new Scanner(System.in);
-        System.out.println("Would you like to 'delete' or create a 'new' note?");
+        System.out.println("Would you like to 'delete', create 'new', or 'return'?");
 
-        String[] optionList = {"new", "delete"};
-
-        String option = scnr.nextLine();
-        while (!SearchArray(option, optionList) ) {
-            System.out.println("Please try again");
-            option = scnr.nextLine();
-        }
+        String option = checkString(new String[]{"new", "delete", "return"});
 
         if (option.equalsIgnoreCase("new")) {
             System.out.println("Enter new note:");
@@ -71,6 +95,10 @@ public class Inputs {
             System.out.println("Which note ID would you like to delete?");
             String deleteId = scnr.nextLine();
             SQLite.deleteSubnote("notes.db", deleteId);
+        }
+        if (option.equalsIgnoreCase("return")) {
+            selectNote();
+            return;
         }
     }
 
